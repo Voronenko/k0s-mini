@@ -1,0 +1,11 @@
+- name: Provision Master Nodes
+  hosts: kube_master_nodes
+  gather_facts: yes
+
+  vars_files:
+    - common_vars.yml
+
+  tasks:
+    - name: Display All Gathered Facts
+      debug:
+        var: ansible_facts

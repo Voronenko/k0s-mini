@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traefik-dashboard-ingress
+  namespace: traefik
+  annotations:
+    kubernetes.io/ingressClassName: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+ #   traefik.ingress.kubernetes.io/router.middlewares: ingress-traefik-traefikbasicauth@kubernetescrd
+#    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+spec:
+  tls:
+    - secretName: fiksim-tls-secret
+
+  rules:
+    - host: vg-traefik.fiks.im
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: traefik
+                port:
+                  number: 8080

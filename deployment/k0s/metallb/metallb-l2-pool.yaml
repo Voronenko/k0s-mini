@@ -1,0 +1,15 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: vagrant-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.3.201-192.168.3.210
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: vagrant-cluster
+  namespace: metallb-system

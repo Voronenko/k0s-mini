@@ -1,0 +1,92 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+  user: admin
+spec:
+  hosts:
+  - ssh:
+      address: 192.168.56.70
+      user: vagrant
+      port: 22
+      keyPath: ~/.ssh/id_ed25519
+    role: controller
+    privateInterface: enp0s8
+    privateAddress: 192.168.56.70
+  - ssh:
+      address: 192.168.56.71
+      user: vagrant
+      port: 22
+      keyPath: ~/.ssh/id_ed25519
+    role: worker
+    privateInterface: enp0s8
+    privateAddress: 192.168.56.71
+  - ssh:
+      address: 192.168.56.72
+      user: vagrant
+      port: 22
+      keyPath: ~/.ssh/id_ed25519
+    role: worker
+    privateInterface: enp0s8
+    privateAddress: 192.168.56.72
+  k0s:
+    version: v1.32.1+k0s.0
+    config:
+      spec:
+        api:
+          externalAddress: 192.168.56.70
+          sans:
+          - 192.168.56.70
+#        network:
+#          nodeLocalLoadBalancing:
+#            enabled: true
+#            type: EnvoyProxy
+        extensions:
+          helm:
+            concurrencyLevel: 1
+            repositories:
+            - name: traefik
+              url: https://traefik.github.io/charts
+            - name: longhorn
+              url: https://charts.longhorn.io
+            - name: ingress-nginx
+              url: https://kubernetes.github.io/ingress-nginx
+            - name: metallb
+              url: https://metallb.github.io/metallb
+            - name: bitnami
+              url: https://charts.bitnami.com/bitnami
+            - name: jetstack
+              url: https://charts.jetstack.io
+            charts:
+            - name: traefik
+              chartname: traefik/traefik
+              version: "34.2.0"
+              namespace: traefik
+              order: 3
+            - name: longhorn
+              chartname: longhorn/longhorn
+              version: "1.8.0"
+              namespace: longhorn-system
+              order: 1
+            - name: metallb
+              chartname: metallb/metallb
+              version: "0.14.8"
+              namespace: metallb-system
+              order: 2
+            - name: certmanager
+              chartname: jetstack/cert-manager
+              version: "v1.17.0"
+              namespace: cert-manager
+              order: 4
+
+
+#            - name: metallb
+#              chartname: bitnami/metallb
+#              version: "2.5.4"
+#              namespace: default
+#              values: |
+#                configInline:
+#                  address-pools:
+#                  - name: generic-cluster-pool
+#                    protocol: layer2
+#                    addresses:

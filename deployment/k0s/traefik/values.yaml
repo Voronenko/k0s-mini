@@ -1,0 +1,67 @@
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: fiksim-tls-secret
+
+ingressRoute:
+  dashboard:
+    # -- Create an IngressRoute for the dashboard
+    enabled: true
+    # -- Additional ingressRoute annotations (e.g. for kubernetes.io/ingress.class)
+    annotations: {}
+    # -- Additional ingressRoute labels (e.g. for filtering IngressRoute by custom labels)
+    labels: {}
+    # -- The router match rule used for the dashboard ingressRoute
+    #matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+    matchRule: Host(`vg-traefik.fiks.im`)
+    # -- The internal service used for the dashboard ingressRoute
+    services:
+      - name: api@internal
+        kind: TraefikService
+    # -- Specify the allowed entrypoints to use for the dashboard ingress route, (e.g. traefik, web, websecure).
+    # By default, it's using traefik entrypoint, which is not exposed.
+    # /!\ Do not expose your dashboard without any protection over the internet /!\
+    #entryPoints: ["traefik"]
+    entryPoints: ["websecure"]
+    # -- Additional ingressRoute middlewares (e.g. for authentication)
+    middlewares: []
+    # -- TLS options (e.g. secret containing certificate)
+    tls: {}
+  healthcheck:
+    # -- Create an IngressRoute for the healthcheck probe
+    enabled: true
+    # -- Additional ingressRoute annotations (e.g. for kubernetes.io/ingress.class)
+    annotations: {}
+    # -- Additional ingressRoute labels (e.g. for filtering IngressRoute by custom labels)
+    labels: {}
+    # -- The router match rule used for the healthcheck ingressRoute
+    matchRule: PathPrefix(`/ping`)
+    # -- The internal service used for the healthcheck ingressRoute
+    services:
+      - name: ping@internal
+        kind: TraefikService
+    # -- Specify the allowed entrypoints to use for the healthcheck ingress route, (e.g. traefik, web, websecure).
+    # By default, it's using traefik entrypoint, which is not exposed.
+    entryPoints: ["traefik"]
+    # -- Additional ingressRoute middlewares (e.g. for authentication)
+    middlewares: []
+    # -- TLS options (e.g. secret containing certificate)
+    tls: {}
+
+globalArguments:
+  - --serverstransport.insecureskipverify=true
+
+# -- Additional arguments to be passed at Traefik's binary
+# See [CLI Reference](https://docs.traefik.io/reference/static-configuration/cli/)
+# Use curly braces to pass values: `helm install --set="additionalArguments={--providers.kubernetesingress.ingressclass=traefik-internal,--log.level=DEBUG}"`
+additionalArguments:
+   - "--api.insecure=true"
+#  - "--providers.kubernetesingress.ingressclass=traefik-internal"
+#  - "--log.level=DEBUG"
+
+# -- Additional Environment variables to be passed to Traefik's binary
+# @default -- See _values.yaml_
+env: []
+
+# -- Environment variables to be passed to Traefik's binary from configMaps or secrets
+envFrom: []

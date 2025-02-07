@@ -1,0 +1,8 @@
+.envrc
+.vagrant/
+.python-version
+.idea
+*.log
+k0sctl
+kubeconfig
+deployment/k0s/traefik/certs/*.pem
