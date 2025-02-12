@@ -31,7 +31,8 @@ vagrant_machines = Hash.new
 
 Vagrant.configure("2") do |config|
 #    vagrant plugin install vagrant-disksize
-  config.disksize.size = '20GB'
+  config.vbguest.auto_update = vconfig['plugin_vbguest_auto_update'] if Vagrant.has_plugin?('vagrant-vbguest')
+  config.disksize.size = '60GB'
   config.vm.boot_timeout = 600
 
   vconfig['vagrant_machines'].each do |machine|
@@ -122,8 +123,8 @@ Vagrant.configure("2") do |config|
       vm_config.vm.provider :virtualbox do |v|
         v.linked_clone = true
         v.name = machine['vagrant_hostname']
-        v.memory = vconfig['vagrant_memory']
-        v.cpus = vconfig['vagrant_cpus']
+        v.memory = machine.fetch('vagrant_memory', vconfig['vagrant_memory'])
+        v.cpus = machine.fetch('vagrant_cpus', vconfig['vagrant_cpus'])
         v.customize ['modifyvm', :id, '--uartmode1', 'disconnected']
         v.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
         v.customize ['modifyvm', :id, '--ioapic', 'on']

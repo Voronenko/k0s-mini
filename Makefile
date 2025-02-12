@@ -23,6 +23,15 @@ vg-ports:
 		vagrant port; \
 	done
 
+vg-ssh-master:
+	 vagrant ssh k0s_master
+
+vg-ssh-node1:
+	 vagrant ssh k0s_node1
+
+vg-ssh-node2:
+	 vagrant ssh k0s_node2
+
 update-certs:
 	curl -sLo ./deployment/k0s/traefik/certs/fiksim_privkey.pem https://github.com/Voronenko/fiks.im/releases/download/$(shell curl -s https://api.github.com/repos/Voronenko/fiks.im/releases/latest | grep tag_name | cut -d '"' -f 4)/fiksim_privkey.pem
 	curl -sLo ./deployment/k0s/traefik/certs/fiksim_cert.pem https://github.com/Voronenko/fiks.im/releases/download/$(shell curl -s https://api.github.com/repos/Voronenko/fiks.im/releases/latest | grep tag_name | cut -d '"' -f 4)/fiksim_cert.pem
@@ -40,8 +49,17 @@ k0s-init:
 k0s-apply:
 	k0sctl apply --debug --config k0sctl.yaml
 
+k0s-longhorn-dashboard:
+	kubectl apply -f deployment/k0s/longhorn/dashboard.yaml
+
 k0s-troubleshoot-charts:
 	kubectl -n kube-system get charts k0s-addon-chart-traefik k0s-addon-chart-metallb k0s-addon-chart-longhorn -o custom-columns=NAME:.metadata.name,ERROR:.status.error
+
+k0s-print-lbs:
+	echo "NGINX ingress":
+	kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+	echo "Traefik ingress":
+	kubectl get services  --namespace traefik traefik --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
 helm-repos-add:
 	helm repo add longhorn https://charts.longhorn.io
@@ -56,7 +74,10 @@ helm-traefik-install:
 	helm upgrade --install --create-namespace --namespace=traefik --values deployment/k0s/traefik/values.yaml traefik traefik/traefik
 	kubectl apply -f deployment/k0s/traefik/dashboard.yaml
 	kubectl apply -f deployment/k0s/traefik/whoami.yaml
-
+helm-nginx-ingress-install:
+	helm upgrade --install ingress-nginx ingress-nginx \
+	  --repo https://kubernetes.github.io/ingress-nginx \
+	  --namespace ingress-nginx --create-namespace
 
 clean-ssh-fingerprints:
 	ssh-keygen -f "$(HOME)/.ssh/known_hosts" -R "node1.fiks.im"

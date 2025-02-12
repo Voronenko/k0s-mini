@@ -6,3 +6,5 @@
 k0sctl
 kubeconfig
 deployment/k0s/traefik/certs/*.pem
+deployment/local/*
+!deployment/local/.gitkeep

@@ -1,6 +1,8 @@
 # vagrant box add canonical/jammy64 https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64-vagrant.box
 vagrant_box: canonical/jammy64
 
+plugin_vbguest_auto_update: false
+
 
 vagrant_user: vagrant
 vagrant_synced_folder_default_type: nfs
@@ -20,14 +22,14 @@ vagrant_machines:
     vagrant_machine_name: k0s_node1
     vagrant_ip: 192.168.56.71
 #    vagrant_public_ip: 192.168.56.71
-    vagrant_memory: 8192
-    vagrant_cpus: 2
+    vagrant_memory: 32768
+    vagrant_cpus: 4
   - vagrant_hostname: node2.fiks.im
     vagrant_machine_name: k0s_node2
     vagrant_ip: 192.168.56.72
 #    vagrant_public_ip: 192.168.56.72
-    vagrant_memory: 8192
-    vagrant_cpus: 2
+    vagrant_memory: 32768
+    vagrant_cpus: 4
 
 # Allow VM to be accessed via a public network interface on your host.
 # Vagrant boxes are insecure by default, so be careful. You've been warned!

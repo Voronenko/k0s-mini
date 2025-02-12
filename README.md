@@ -150,7 +150,16 @@ You can delete the example-load-balancer:
 
 ### longhorn storage class
 
-defining storage classes based on longhorn you could potentially easier imitate storage classes used in prod environment
+defining storage classes based on longhorn you could potentially easier imitate storage classes used in 
+prod environment, so that your experiment would have as less differences as possible
+
+```shell
+kubectl get storageclass
+Alias tip: k get storageclass
+NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+longhorn (default)   driver.longhorn.io   Delete          Immediate           true                   24h
+longhorn-static      driver.longhorn.io   Delete          Immediate           true                   24h
+```
 
 With UI on https://vg-longhorn.fiks.im/
 
@@ -171,7 +180,65 @@ via /etc/hosts. You can always get up-to-date green seal certificates from https
 
 Test deployment 
 
+
+### Nginx ingress controller
+
+Note, that applying after traefik ingress controller, it will use next public IP available to metallb cluster load
+balancer, thus you should point nginx enabled services to that IP, don't be confused.
+
+Should you test, deploy dummy-nginx-test app, which should be available on https://vg-dummy.fiks.im/
+
+ideas for usage
+
+```yaml
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: example
+    namespace: foo
+  spec:
+    ingressClassName: nginx
+    rules:
+      - host: www.example.com
+        http:
+          paths:
+            - pathType: Prefix
+              backend:
+                service:
+                  name: exampleService
+                  port:
+                    number: 80
+              path: /
+    # This section is only required if TLS is to be enabled for the Ingress
+    tls:
+      - hosts:
+        - www.example.com
+        secretName: example-tls
+
+If TLS is enabled for the Ingress, a Secret containing the certificate and key must also be provided:
+
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: example-tls
+    namespace: foo
+  data:
+    tls.crt: <base64 encoded cert>
+    tls.key: <base64 encoded key>
+  type: kubernetes.io/tls
+```
+
 ## Tools and notes
 
 Visual subnet calculator
 https://www.davidc.net/sites/default/subnets/subnets.html
+
+
+## Troubleshouting
+
+### Optimize space
+
+Change default replica count for volumes to 1 from kubernetes default 3
+
+`kubectl edit cm longhorn-storageclass -n longhorn-system`
+kubectl edit cm longhorn-storageclass -n longhorn-system
