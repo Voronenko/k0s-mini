@@ -29,6 +29,14 @@ spec:
     role: worker
     privateInterface: enp0s8
     privateAddress: 192.168.56.72
+  - ssh:
+      address: 192.168.56.73
+      user: vagrant
+      port: 22
+      keyPath: ~/.ssh/id_ed25519
+    role: worker
+    privateInterface: enp0s8
+    privateAddress: 192.168.56.73
   k0s:
     version: v1.32.1+k0s.0
     config:

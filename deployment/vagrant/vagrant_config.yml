@@ -17,7 +17,7 @@ vagrant_machines:
     vagrant_ip: 192.168.56.70
 #    vagrant_public_ip: 192.168.56.70
     vagrant_memory: 4096
-    vagrant_cpus: 2
+    vagrant_cpus: 1
   - vagrant_hostname: node1.fiks.im
     vagrant_machine_name: k0s_node1
     vagrant_ip: 192.168.56.71
@@ -27,6 +27,12 @@ vagrant_machines:
   - vagrant_hostname: node2.fiks.im
     vagrant_machine_name: k0s_node2
     vagrant_ip: 192.168.56.72
+#    vagrant_public_ip: 192.168.56.72
+    vagrant_memory: 32768
+    vagrant_cpus: 4
+  - vagrant_hostname: node3.fiks.im
+    vagrant_machine_name: k0s_node3
+    vagrant_ip: 192.168.56.73
 #    vagrant_public_ip: 192.168.56.72
     vagrant_memory: 32768
     vagrant_cpus: 4

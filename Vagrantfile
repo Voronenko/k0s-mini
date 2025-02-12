@@ -32,7 +32,7 @@ vagrant_machines = Hash.new
 Vagrant.configure("2") do |config|
 #    vagrant plugin install vagrant-disksize
   config.vbguest.auto_update = vconfig['plugin_vbguest_auto_update'] if Vagrant.has_plugin?('vagrant-vbguest')
-  config.disksize.size = '60GB'
+  config.disksize.size = '100GB'
   config.vm.boot_timeout = 600
 
   vconfig['vagrant_machines'].each do |machine|

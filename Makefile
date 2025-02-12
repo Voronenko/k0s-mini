@@ -56,10 +56,10 @@ k0s-troubleshoot-charts:
 	kubectl -n kube-system get charts k0s-addon-chart-traefik k0s-addon-chart-metallb k0s-addon-chart-longhorn -o custom-columns=NAME:.metadata.name,ERROR:.status.error
 
 k0s-print-lbs:
-	echo "NGINX ingress":
-	kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
-	echo "Traefik ingress":
-	kubectl get services  --namespace traefik traefik --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+	@echo "NGINX ingress":
+	@kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
+	@echo "Traefik ingress":
+	@kubectl get services  --namespace traefik traefik --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
 helm-repos-add:
 	helm repo add longhorn https://charts.longhorn.io
