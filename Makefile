@@ -36,6 +36,7 @@ update-certs:
 	curl -sLo ./deployment/k0s/traefik/certs/fiksim_privkey.pem https://github.com/Voronenko/fiks.im/releases/download/$(shell curl -s https://api.github.com/repos/Voronenko/fiks.im/releases/latest | grep tag_name | cut -d '"' -f 4)/fiksim_privkey.pem
 	curl -sLo ./deployment/k0s/traefik/certs/fiksim_cert.pem https://github.com/Voronenko/fiks.im/releases/download/$(shell curl -s https://api.github.com/repos/Voronenko/fiks.im/releases/latest | grep tag_name | cut -d '"' -f 4)/fiksim_cert.pem
 	curl -sLo ./deployment/k0s/traefik/certs/fiksim_fullchain.pem https://github.com/Voronenko/fiks.im/releases/download/$(shell curl -s https://api.github.com/repos/Voronenko/fiks.im/releases/latest | grep tag_name | cut -d '"' -f 4)/fiksim_fullchain.pem
+	kubectl delete secret fiksim-tls-secret --namespace=traefik --ignore-not-found
 	kubectl create secret tls fiksim-tls-secret --cert=./deployment/k0s/traefik/certs/fiksim_fullchain.pem --key=./deployment/k0s/traefik/certs/fiksim_privkey.pem --namespace=traefik
 
 
@@ -98,10 +99,14 @@ build:
 get-kubeconfig:
 	k0sctl kubeconfig > kubeconfig
 
-fwd-longhorn-ui:
+fwd-ui-longhorn:
 	echo "UI will be at port 8000"
 	kubectl -n longhorn-system port-forward service/longhorn-frontend 8000:80
-fwd-traefik-ui:
+fwd-ui-traefik:
 	echo "UI will be at port 8080"
 	echo 'kubectl port-forward $(kubectl get pods --selector "app.kubernetes.io/name=traefik" --output=name) 8080:8080'
 	kubectl port-forward $(shell kubectl get pods --selector "app.kubernetes.io/name=traefik" --output=name) 8080:8080
+ui-longhorn:
+	xdg-open https://vg-longhorn.fiks.im/
+ui-traefik:
+	xdg-open https://vg-traefik.fiks.im/
