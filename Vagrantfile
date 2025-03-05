@@ -37,6 +37,12 @@ Vagrant.configure("2") do |config|
 
   vconfig['vagrant_machines'].each do |machine|
     config.vm.define machine['vagrant_machine_name'] do |vm_config|
+
+      if Vagrant.has_plugin?('vagrant-disksize')
+        disk_size = machine.fetch('vagrant_disk_size', '100GB') # default to 100GB if not specified
+        vm_config.disksize.size = disk_size
+      end
+
       # Networking configuration.
       vm_config.vm.hostname = machine['vagrant_hostname']
       vm_config.vm.network :private_network,
@@ -60,7 +66,7 @@ Vagrant.configure("2") do |config|
       unless machine['vagrant_internal_ip'].nil? || machine['vagrant_internal_ip'].empty?
           vm_config.vm.provision "shell", inline: <<-SHELL
             # Bring up the specified interface with IP configuration
-           sudo rm /etc/netplan/50-cloud-init.yaml
+            sudo rm /etc/netplan/50-cloud-init.yaml
           SHELL
       end
 

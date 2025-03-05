@@ -11,31 +11,36 @@ vagrant_gui: false
 # If you need to run multiple instances of VM, set a unique hostname,
 # machine name, and IP address for each instance.
 
+# on spin-up first nodes, than master
+# on halt - first master, than nodes
 vagrant_machines:
-  - vagrant_hostname: master.fiks.im
-    vagrant_machine_name: k0s_master
-    vagrant_ip: 192.168.56.70
-#    vagrant_public_ip: 192.168.56.70
-    vagrant_memory: 4096
-    vagrant_cpus: 1
   - vagrant_hostname: node1.fiks.im
     vagrant_machine_name: k0s_node1
     vagrant_ip: 192.168.56.71
 #    vagrant_public_ip: 192.168.56.71
     vagrant_memory: 32768
     vagrant_cpus: 4
+    vagrant_disk_size: 200GB
   - vagrant_hostname: node2.fiks.im
     vagrant_machine_name: k0s_node2
     vagrant_ip: 192.168.56.72
 #    vagrant_public_ip: 192.168.56.72
     vagrant_memory: 32768
     vagrant_cpus: 4
+    vagrant_disk_size: 200GB
   - vagrant_hostname: node3.fiks.im
     vagrant_machine_name: k0s_node3
     vagrant_ip: 192.168.56.73
 #    vagrant_public_ip: 192.168.56.72
     vagrant_memory: 32768
     vagrant_cpus: 4
+    vagrant_disk_size: 200GB
+  - vagrant_hostname: master.fiks.im
+    vagrant_machine_name: k0s_master
+    vagrant_ip: 192.168.56.70
+#    vagrant_public_ip: 192.168.56.70
+    vagrant_memory: 4096
+    vagrant_cpus: 1
 
 # Allow VM to be accessed via a public network interface on your host.
 # Vagrant boxes are insecure by default, so be careful. You've been warned!

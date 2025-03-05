@@ -24,13 +24,13 @@ vg-ports:
 	done
 
 vg-ssh-master:
-	 vagrant ssh k0s_master
+	vagrant ssh k0s_master
 
 vg-ssh-node1:
-	 vagrant ssh k0s_node1
+	vagrant ssh k0s_node1
 
 vg-ssh-node2:
-	 vagrant ssh k0s_node2
+	vagrant ssh k0s_node2
 
 update-certs:
 	curl -sLo ./deployment/k0s/traefik/certs/fiksim_privkey.pem https://github.com/Voronenko/fiks.im/releases/download/$(shell curl -s https://api.github.com/repos/Voronenko/fiks.im/releases/latest | grep tag_name | cut -d '"' -f 4)/fiksim_privkey.pem
@@ -43,6 +43,9 @@ update-certs:
 install-k0s-ctl:
 	curl -sLo ./k0sctl https://github.com/k0sproject/k0sctl/releases/download/$(shell curl -s https://api.github.com/repos/k0sproject/k0sctl/releases/latest | grep tag_name | cut -d '"' -f 4)/k0sctl-linux-amd64
 	chmod +x ./k0sctl
+
+k0s-version:
+	kubectl version
 
 k0s-init:
 	k0sctl init > k0sctl.yaml
@@ -59,7 +62,7 @@ k0s-troubleshoot-charts:
 k0s-print-lbs:
 	@echo "NGINX ingress":
 	@kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
-	@echo "Traefik ingress":
+	@echo "\r\nTraefik ingress":
 	@kubectl get services  --namespace traefik traefik --output jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
 helm-repos-add:
@@ -77,8 +80,8 @@ helm-traefik-install:
 	kubectl apply -f deployment/k0s/traefik/whoami.yaml
 helm-nginx-ingress-install:
 	helm upgrade --install ingress-nginx ingress-nginx \
-	  --repo https://kubernetes.github.io/ingress-nginx \
-	  --namespace ingress-nginx --create-namespace
+		--repo https://kubernetes.github.io/ingress-nginx \
+		--namespace ingress-nginx --create-namespace
 
 clean-ssh-fingerprints:
 	ssh-keygen -f "$(HOME)/.ssh/known_hosts" -R "node1.fiks.im"
@@ -110,3 +113,6 @@ ui-longhorn:
 	xdg-open https://vg-longhorn.fiks.im/
 ui-traefik:
 	xdg-open https://vg-traefik.fiks.im/
+
+print-ingesses:
+	kubectl get ingresses --all-namespaces -o custom-columns='NAMESPACE:.metadata.namespace, NAME:.metadata.name, HOSTS:.spec.rules[*].host'
